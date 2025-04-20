@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel Крым - Виртуальные экскурсии по Крыму</title>
+
+  <!-- Шрифты -->
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- React и VKUI -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@vkontakte/vkui@5.30.2/dist/cjs/index.umd.min.js"></script>
+  <script src="https://unpkg.com/@vkontakte/icons@1.97.0/dist/index.umd.js"></script>
+
+  <style>
+    body {
+      font-family: 'Unbounded', Arial, sans-serif;
+      margin: 0;
+      background-color: #f5f5f5;
+    }
+
+    .header-container {
+      height: 200px;
+      background: url('https://travelrk.ru/wp-content/uploads/2024/12/Ozero-Mangup-1-2.jpg') center / cover fixed no-repeat;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .logo {
+      max-width: 180px;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-wrapper {
+      position: relative;
+      padding: 1rem;
+    }
+
+    .scroll-button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    .scroll-left {
+      left: 0;
+    }
+
+    .scroll-right {
+      right: 0;
+    }
+
+    .card-container {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: 1rem;
+      padding: 1rem 2rem;
+    }
+
+    .card-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .card {
+      flex: 0 0 auto;
+      width: 250px;
+      background-color: #808080;
+      border-radius: 12px;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      scroll-snap-align: start;
+    }
+
+    .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-description {
+      font-size: 0.8rem;
+      line-height: 1.4em;
+      margin-bottom: 1rem;
+      flex-grow: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header-container">
+    <img src="https://travelrk.ru/wp-content/uploads/2022/12/logo-3.png" class="logo" alt="Travel Крым">
+    <h1>Виртуальные экскурсии по Крыму</h1>
+  </div>
+
+  <main>
+    <div class="card-wrapper">
+      <button class="scroll-button scroll-left" onclick="scrollCards(-1)">‹</button>
+      <div class="card-container" id="cards-react"></div>
+      <button class="scroll-button scroll-right" onclick="scrollCards(1)">›</button>
+    </div>
+  </main>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const { createElement } = React;
+      const { render } = ReactDOM;
+      const { Button } = VKUI;
+      const { Icon28LocationOutline, Icon28ArrowRightOutline } = VKIcons;
+
+      const cardsData = [
+        {
+          title: 'Южный Крым',
+          description: 'Южный Крым – это райский уголок с великолепными пейзажами, уютными пляжами и достопримечательностями.',
+          image: 'https://travelrk.ru/wp-content/uploads/2025/03/Gurzuf-350-450.jpg'
+        },
+        {
+          title: 'Западный Крым',
+          description: 'Западный Крым – это степные равнины и пляжи Беляуса, Оленевка и Тарханкут.',
+          image: 'https://travelrk.ru/wp-content/uploads/2023/12/PANO0031-2048x1152.jpg'
+        },
+        {
+          title: 'Восточный Крым',
+          description: 'Восточный Крым – это горные ландшафты, лазурное море и атмосферные места.',
+          image: 'https://travelrk.ru/wp-content/uploads/2024/12/Koktebel-1-4-1.jpg'
+        },
+        {
+          title: 'Центральный Крым',
+          description: 'Центральный Крым – это Белая скала, степи, виноградники и историческое наследие.',
+          image: 'https://travelrk.ru/wp-content/uploads/2024/12/Belaja-skala3.jpg'
+        }
+      ];
+
+      const Card = ({ title, description, image }) => createElement("div", { className: "card" },
+        createElement("img", { src: image, alt: title }),
+        createElement("div", { className: "card-title" },
+          createElement(Icon28LocationOutline, { width: 20, height: 20 }),
+          title
+        ),
+        createElement("div", { className: "card-description" }, description),
+        createElement(Button, {
+          size: "m",
+          mode: "outline",
+          stretched: true,
+          after: createElement(Icon28ArrowRightOutline, {}),
+          onClick: () => alert(`Открыть: ${title}`)
+        }, "Подробнее")
+      );
+
+      const App = () => cardsData.map((props, i) => createElement(Card, { key: i, ...props }));
+
+      render(createElement(App), document.getElementById("cards-react"));
+    });
+
+    function scrollCards(direction) {
+      const container = document.getElementById("cards-react");
+      container.scrollBy({
+        left: 260 * direction,
+        behavior: 'smooth'
+      });
+    }
+  </script>
+</body>
+</html>
